@@ -3,5 +3,6 @@ project(cmake_cpp_cuda)
 
 set(CMAKE_CXX_STANDARD 14)
 
+add_subdirectory(cmake)
 add_subdirectory(cpp)
 add_subdirectory(cuda)

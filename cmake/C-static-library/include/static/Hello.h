@@ -1,0 +1,15 @@
+//
+// Created by zzk on 2021/10/19.
+//
+
+#ifndef CMAKE_CPP_CUDA_CMAKE_C_STATIC_LIBRARY_INCLUDE_STATIC_HELLO_H_
+#define CMAKE_CPP_CUDA_CMAKE_C_STATIC_LIBRARY_INCLUDE_STATIC_HELLO_H_
+
+#include "iostream"
+
+class Hello {
+ public:
+  void SayHello();
+};
+
+#endif //CMAKE_CPP_CUDA_CMAKE_C_STATIC_LIBRARY_INCLUDE_STATIC_HELLO_H_

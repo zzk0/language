@@ -7,5 +7,6 @@ add_library(hello::library ALIAS hello_shared_library)
 # alias cannot be used
 target_include_directories(hello_shared_library PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
+# when you run the executable, you need to set LD_LIBRARY_PATH to the library path
 add_executable(hello_shared_binary src/main.cpp)
 target_link_libraries(hello_shared_binary PRIVATE hello::library)

@@ -6,8 +6,9 @@
 #include "condition_variable"
 
 // 线程池就是一个生产者消费者模型
-// 执行过程发生了异常
-// 线程池需要退出死循环, 设计一个 join 方法, 和析构函数
+// 执行过程发生了异常或者死锁
+// 线程池需要退出死循环, 设计一个 join 方法,
+// 析构函数删除 thread 对象
 
 template<int N>
 class ThreadPool {
@@ -15,6 +16,7 @@ class ThreadPool {
   ThreadPool() {
     for (int i = 0; i < N; i++) {
       threads_[i] = std::thread([&]() {
+        std::cout << "starting loop" << std::endl;
         while (true) {
           std::unique_lock<std::mutex> lock(mutex_);
           while (!notified_) {
@@ -22,12 +24,13 @@ class ThreadPool {
             cv_.wait(lock);
           }
 
-          if (!queue_.empty()) {
-            std::function<void()> func = queue_.front();
-            queue_.pop();
-            func();
-            notified_ = false;
-          }
+          std::cout << 1 << std::endl;
+//          if (!queue_.empty()) {
+//            std::function<void()> func = queue_.front();
+//            queue_.pop();
+//            func();
+//            notified_ = false;
+//          }
         }
       });
     }
@@ -54,8 +57,11 @@ class ThreadPool {
 int main() {
   ThreadPool<4> pool;
   for (int i = 0; i < 100; i++) {
-    pool.Enqueue([i]() {
-      std::cout << i << " " << std::this_thread::get_id() << std::endl;
+//    pool.Enqueue([i]() {
+//      std::cout << i << " " << std::this_thread::get_id() << std::endl;
+//    });
+    pool.Enqueue([]() {
+      std::cout << "do nothing" << std::endl;
     });
   }
 

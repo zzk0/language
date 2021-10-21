@@ -22,7 +22,7 @@ reference: https://github.com/ttroy50/cmake-examples
 
 [可变模板参数函数的参数包展开](cpp/variadic-template-1): 介绍两种展开可变模板参数函数的参数包的方法, 一种是递归调用, 一种是利用逗号表达式
 
-[实现一个线程池](cpp/producer-consumer): 实现参考[这篇](https://zhuanlan.zhihu.com/p/61464921)
+[实现一个线程池](cpp/thread-pool): 实现参考[这篇](https://zhuanlan.zhihu.com/p/61464921)
 
 # cuda
 

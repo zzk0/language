@@ -99,6 +99,17 @@ int main() {
   });
   std::cout << future.get() << std::endl;
 
+  std::future<int> fibonacii = pool.Submit([](int i) -> int {
+    int a = 0, b = 1;
+    for (int j = 0; j < i; j++) {
+      int temp = b;
+      b = b + a;
+      a = temp;
+    }
+    return b;
+  }, 5);
+  std::cout << fibonacii.get() << std::endl;
+
 //  std::this_thread::sleep_for(std::chrono::seconds(3));
   std::cout << "Main End" << std::endl;
   return 1;

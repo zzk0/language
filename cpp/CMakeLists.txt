@@ -1,3 +1,5 @@
 add_subdirectory(variadic-template-1)
 add_subdirectory(thread-pool)
 add_subdirectory(producer-consumer)
+add_subdirectory(template-inheritance)
+add_subdirectory(pybind-example)

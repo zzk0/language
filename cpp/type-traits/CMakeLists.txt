@@ -1,0 +1,1 @@
+add_executable(type-traits-exe main.cpp)

@@ -20,11 +20,13 @@ reference: https://github.com/ttroy50/cmake-examples
 
 # cpp
 
-reference: https://changkun.de/modern-cpp/zh-cn/00-preface/
+[modern cpp feature](https://github.com/AnthonyCalandra/modern-cpp-features): Modern CPP 新特性
 
 [可变模板参数函数的参数包展开](cpp/variadic-template-1): 介绍两种展开可变模板参数函数的参数包的方法, 一种是递归调用, 一种是利用逗号表达式
 
 [实现一个线程池](cpp/thread-pool): 实现参考[这篇](https://zhuanlan.zhihu.com/p/61464921)
+
+reference: https://changkun.de/modern-cpp/zh-cn/00-preface/
 
 # cuda
 

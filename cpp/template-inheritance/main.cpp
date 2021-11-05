@@ -6,15 +6,19 @@
 #include "vector"
 #include "memory"
 
-class Tensor {
+class Apple {
+public:
+  Apple() {
+    std::cout << "construct" << std::endl;
+  }
 
-};
-
-class TensorTuple final : std::vector<std::shared_ptr<Tensor>>,
-                          std::enable_shared_from_this<TensorTuple> {
-
+  ~Apple() {
+    std::cout << "desctruct" << std::endl;
+  }
 };
 
 int main() {
-  std::cout << "asdf" << std::endl;
+  std::unique_ptr<Apple> apple;
+  apple.reset(new Apple());
+  apple.reset();
 }

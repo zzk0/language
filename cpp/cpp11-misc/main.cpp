@@ -52,6 +52,18 @@ int count_if_main() {
   return 0;
 }
 
-int main() {
+struct TRITONSERVER_InferenceRequest;
 
+void NewRequest(TRITONSERVER_InferenceRequest** request) {
+  int* x = new int;
+  *x = 10;
+
+  *request = reinterpret_cast<TRITONSERVER_InferenceRequest*>(x);
+}
+
+int main() {
+  TRITONSERVER_InferenceRequest *request;
+  NewRequest(&request);
+
+  std::cout << *reinterpret_cast<int*>(request) << std::endl;
 }

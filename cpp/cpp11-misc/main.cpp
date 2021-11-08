@@ -61,9 +61,54 @@ void NewRequest(TRITONSERVER_InferenceRequest** request) {
   *request = reinterpret_cast<TRITONSERVER_InferenceRequest*>(x);
 }
 
-int main() {
+// 结构体可以不用定义, 完全把它当成一个指针来使用就好了
+int empty_struct_main() {
   TRITONSERVER_InferenceRequest *request;
   NewRequest(&request);
 
   std::cout << *reinterpret_cast<int*>(request) << std::endl;
+  return 0;
+}
+
+template<typename T, typename U>
+class Vector {
+ public:
+  T value;
+};
+
+template<typename T> using intVec = Vector<T, int>; // using 和模板兼容, typedef 不行
+// template<typename > typedef Vector<T, int> int1Vec;  // 不支持这样的操作
+typedef Vector<float, int> floatIntVec;
+
+using MyFunc = void(int, int);  // 可读性更好, 下面的写法甚至不记得
+typedef void MyFunc2(int, int);
+using MyFunc3 = void(&)(int, int);
+typedef void (&MyFunc1)(int, int);
+
+template<typename T>
+class Vector<T, double> {
+ public:
+  T val;
+};
+
+template<>
+class Vector<float, double> {
+ public:
+  float x;
+  double y;
+};
+
+int main() {
+  Vector<int, int> int2Vector{};
+  int2Vector.value = 10;
+
+  Vector<int, double> intDoubleVector{};
+  intDoubleVector.val = 10;
+
+  intVec<double> doubleIntVector{};
+  doubleIntVector.value = 10;
+
+  Vector<float, double> floatDoubleVector{};
+  floatDoubleVector.y = 10;
+  floatDoubleVector.x = 20;
 }

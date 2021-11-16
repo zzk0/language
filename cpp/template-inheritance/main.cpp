@@ -15,6 +15,8 @@ public:
   ~Apple() {
     std::cout << "desctruct" << std::endl;
   }
+ private:
+  int size_;
 };
 
 int main() {

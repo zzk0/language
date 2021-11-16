@@ -2,6 +2,31 @@
 #include "algorithm"
 #include "vector"
 
+class Parent {
+ public:
+  virtual void Study() {}
+};
+
+class Son : public Parent {
+ public:
+  void Study() {}
+};
+
+class Daughter : public Parent {
+ public:
+  void Study() {}
+};
+
+void DynamicCastTest() {
+  Parent *father = new Son;
+  Parent *mather = new Daughter;
+  father->Study();
+  mather->Study();
+
+  Son *son = dynamic_cast<Son*>(mather);
+  std::cout << std::endl;
+}
+
 void StaticAssertEqual() {
   // 必须是编译时常量
   constexpr int x = 1;
@@ -99,16 +124,5 @@ class Vector<float, double> {
 };
 
 int main() {
-  Vector<int, int> int2Vector{};
-  int2Vector.value = 10;
-
-  Vector<int, double> intDoubleVector{};
-  intDoubleVector.val = 10;
-
-  intVec<double> doubleIntVector{};
-  doubleIntVector.value = 10;
-
-  Vector<float, double> floatDoubleVector{};
-  floatDoubleVector.y = 10;
-  floatDoubleVector.x = 20;
+  DynamicCastTest();
 }

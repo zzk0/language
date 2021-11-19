@@ -1,0 +1,10 @@
+//
+// Created by zzk on 2021/11/19.
+//
+#ifndef VER_H
+#define VER_H
+
+const char* ver = "${cf_example_VERSION}";
+const char* path = "@CMAKE_SOURCE_DIR@";
+
+#endif  // VER_H

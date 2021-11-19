@@ -136,7 +136,7 @@ int main() {
   // 三种智能指针对比: auto_ptr, unique_ptr, shared_ptr
   // auto_ptr 复制拷贝的时候, 会使到原来的指针失效, 变成空指针
   // unique_ptr, 建立所有权的概念, 禁止复制, 允许使用 std::move
-  // shared_ptr, 引入了引用技术的概念
+  // shared_ptr, 引入了引用计数的概念
   std::auto_ptr<Apple> apple2(new Apple());
   std::auto_ptr<Apple> apple3 = apple2;
   if (apple2.get() == nullptr) {

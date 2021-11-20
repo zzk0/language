@@ -1,0 +1,5 @@
+package triton;
+
+message ModelConfig {
+  required int32 id = 1;
+}

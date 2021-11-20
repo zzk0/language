@@ -7,7 +7,9 @@ else()
     message(FATAL_ERROR "protobuf not found")
 endif()
 
-PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS address.proto)
+file(GLOB PROTO_FILES "${PROJECT_SOURCE_DIR}/*.proto")
+message(${PROTO_FILES})
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 message("PROTO_SRCS: " ${PROTO_SRCS})
 message("PROTO_HDRS: " ${PROTO_HDRS})
 

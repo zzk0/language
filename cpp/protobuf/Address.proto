@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+message Address {
+  required int32 id = 1;
+  map<int32, string> id2name = 2;
+  repeated string names = 4;
+
+  enum PhoneType {
+    HOME = 0;
+    MOBILE = 1;
+    WORK = 2;
+  }
+}

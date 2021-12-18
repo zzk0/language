@@ -3,6 +3,7 @@
 //
 
 #include "iostream"
+#include "array"
 
 class Apple {
  public:
@@ -39,6 +40,9 @@ class AppleTree {
   AppleTree() : apple_(Apple(10)) {
   }
  private:
+  // 加入这个类有很多成员, 很多构造器, 那么就需要对这些成员逐一使用列表初始化
+  // 所以用下面的方式可以节省一些代码, 如果某个构造器不想要默认值, 用列表初始化覆盖
+  // 所以这里执行的结果是输出上面的 10, 而不会输出下面的 20
   Apple apple_ = Apple(20);
 };
 

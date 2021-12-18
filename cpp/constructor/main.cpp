@@ -8,6 +8,8 @@
 class Apple {
  public:
   Apple() {
+    // this 指针指向这个类的首地址, 如果 new 一个类, 他们的地址是一样的
+    std::cout << this << std::endl;
     std::cout << "Apple Default Constructor" << std::endl;
   }
   explicit Apple(int i) {

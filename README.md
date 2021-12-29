@@ -26,6 +26,8 @@ reference: https://github.com/ttroy50/cmake-examples
 
 [实现一个线程池](cpp/thread-pool): 实现参考[这篇](https://zhuanlan.zhihu.com/p/61464921)
 
+[实现 JIT !!!](cpp/jit): 看[这篇文章](https://blog.reverberate.org/2012/12/hello-jit-world-joy-of-simple-jits.html)
+
 reference: https://changkun.de/modern-cpp/zh-cn/00-preface/
 
 # cuda

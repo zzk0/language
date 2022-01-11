@@ -8,7 +8,8 @@ jobs:
         env:
           test_suite: ${{ matrix.test_suite }}
         run: |
+          set -uex
           echo $test_suite
           echo ${{ matrix.test_suite }}
-          echo $${{ github.run_id }}
+          echo ${{ github.run_id }}
           echo $GITHUB_RUN_ID

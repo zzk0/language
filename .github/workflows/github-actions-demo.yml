@@ -26,3 +26,5 @@ jobs:
           echo $GITHUB_RUN_ID
           echo ${{ github.event.inputs.name }}
           echo ${{ github.event_name }} 
+          echo ${{ github.ref }}
+          echo $GITHUB_REF

@@ -19,7 +19,7 @@ jobs:
           set -uex
           echo $triton_version
           echo ${{ matrix.triton_version }}
-          echo ${{ env.triton_version }}
+          echo "asdfasdf ${{ env.triton_version }}"
           echo $test_suite
           echo ${{ matrix.test_suite }}
           echo ${{ github.run_id }}

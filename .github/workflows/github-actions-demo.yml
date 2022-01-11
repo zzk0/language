@@ -6,11 +6,6 @@ on:
   release:
     types:
       - created
-    inputs:
-      name:
-        description: 'Person to greet'
-        required: false
-        default: 'release'
 
 jobs:
   Explore-GitHub-Actions:
@@ -19,8 +14,12 @@ jobs:
       - name: Set environment variables
         env:
           test_suite: ${{ matrix.test_suite }}
+          triton_version: 21.10
         run: |
           set -uex
+          echo $triton_version
+          echo ${{ matrix.triton_version }}
+          echo ${{ env.triton_version }}
           echo $test_suite
           echo ${{ matrix.test_suite }}
           echo ${{ github.run_id }}

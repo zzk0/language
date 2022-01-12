@@ -5,6 +5,7 @@
 #include "bitset"
 #include "cmath"
 #include "chrono"
+#include "algorithm"
 
 constexpr size_t BitCount(size_t x) {
   int count = 0;
@@ -50,17 +51,14 @@ constexpr int Factor(int x) {
 }
 
 int main() {
-  auto now = std::chrono::high_resolution_clock::now();
-  int x = IsPrime(Factor(10) + 1);
-  auto count = std::chrono::duration_cast<std::chrono::nanoseconds>(now -
-      std::chrono::high_resolution_clock::now()).count();
-  std::cout << x << " " << count << std::endl;
-
-  int val = 0;
-  std::cin >> val;
-  now = std::chrono::high_resolution_clock::now();
-  x = IsPrime(Factor(val) + 1);
-  count = std::chrono::duration_cast<std::chrono::nanoseconds>(now -
-      std::chrono::high_resolution_clock::now()).count();
-  std::cout << x << " " << count << std::endl;
+  using namespace std;
+  vector<vector<int>> arr = {{1,2}, {2,3}, {2, 5}, {0, 2}, {8, 9}};
+  sort(arr.begin(), arr.end());
+  for (const auto& y : arr) {
+    for (const auto& x : y) {
+      std::cout << x << " ";
+    }
+    std::cout << std::endl;
+  }
+  return 0;
 }

@@ -12,10 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "hasdfasdf asfsdf" > world.txt
+      - run: ls -alh
       - uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: world.txt
+          path: ./world.txt
 
   Download-Artifact:
     runs-on: ubuntu-latest
@@ -25,4 +26,5 @@ jobs:
         with:
           name: my-artifact
           path: world.txt
+      - run: ls -alh
       - run: cat world.txt

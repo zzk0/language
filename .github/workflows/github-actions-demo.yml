@@ -10,21 +10,20 @@ on:
 jobs:
   Upload-Artifact:
     runs-on: ubuntu-latest
-    steps:
-      - run: echo "hasdfasdf asfsdf" > world.txt
-      - run: ls -alh
+      steps:
+      - run: mkdir -p path/to/artifact
+      - run: echo hello > path/to/artifact/world.txt
       - uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: ./world.txt
+          path: path/to/artifact
 
   Download-Artifact:
     runs-on: ubuntu-latest
     needs: [Upload-Artifact]
-    steps:
+      steps:
       - uses: actions/download-artifact@v2
         with:
           name: my-artifact
-          path: world.txt
-      - run: ls -alh
-      - run: cat world.txt
+          path: path/to/artifact
+      - run: cat path/to/artifact/world.txt

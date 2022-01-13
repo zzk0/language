@@ -11,19 +11,18 @@ jobs:
   Upload-Artifact:
     runs-on: ubuntu-latest
     steps:
-      - name: Upload artifact
       - run: echo "hasdfasdf asfsdf" > world.txt
       - uses: actions/upload-artifact@v2
         with:
           name: my-artifact
           path: world.txt
 
-#   Download-Artifact:
-#     runs-on: ubuntu-latest
-#     needs: [Upload-Artifact]
-#     steps:
-#       - uses: actions/download-artifact@v2
-#         with:
-#           name: my-artifact
-#           path: world.txt
-#       - run: cat world.txt
+  Download-Artifact:
+    runs-on: ubuntu-latest
+    needs: [Upload-Artifact]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+          path: world.txt
+      - run: cat world.txt

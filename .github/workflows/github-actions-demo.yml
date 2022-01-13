@@ -8,29 +8,6 @@ on:
       - created
 
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set environment variables
-        env:
-          test_suite: ${{ matrix.test_suite }}
-          triton_version: 21.10
-        run: |
-          set -uex
-          echo $triton_version
-          echo ${{ matrix.triton_version }}
-          echo "asdfasdf ${{ env.triton_version }}"
-          echo $test_suite
-          echo ${{ matrix.test_suite }}
-          echo ${{ github.run_id }}
-          echo $GITHUB_RUN_ID
-          echo ${{ github.event.inputs.name }}
-          echo ${{ github.event_name }} 
-          echo ${{ github.ref }}
-          echo $GITHUB_REF
-          echo ${{ github.ref_name }}
-          echo $GITHUB_REF_NAME
-
   Upload-Artifact:
     runs-on: ubuntu-latest
     steps:

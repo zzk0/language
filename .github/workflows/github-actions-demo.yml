@@ -14,8 +14,12 @@ env:
 jobs:
   Upload-Artifact:
     runs-on: ubuntu-latest
+    outputs:
+      upload-status: ${{ steps.step2.outputs.good }} 
     steps:
       - run: echo ${{ env.TRITON_VERSION }}
+      - id: step2
+        run: echo "::set-output name=good::bad"
 
   Download-Artifact:
     runs-on: ubuntu-latest
@@ -24,3 +28,4 @@ jobs:
       - run: |
           echo ${{ env.TRITON_VERSION }}
           echo ${{ env.DOCKER_IMAGE }}
+          echo ${{ needs.Upload-Artifact.outputs.upload-status }}

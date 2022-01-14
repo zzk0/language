@@ -7,23 +7,21 @@ on:
     types:
       - created
 
+env:
+  TRITON_VERSION: "21.10"
+
 jobs:
   Upload-Artifact:
     runs-on: ubuntu-latest
     steps:
-      - run: mkdir -p path/to/artifact
-      - run: echo hello > path/to/artifact/world.txt
-      - uses: actions/upload-artifact@v2
-        with:
-          name: my-artifact
-          path: path/to/artifact
+      - run: echo ${{ env.TRITON_VERSION }}
 
   Download-Artifact:
     runs-on: ubuntu-latest
     needs: [Upload-Artifact]
+    env:
+      DOCKER_IMAGE: "oneflow-serving:${{ github.ref_name }}"
     steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: my-artifact
-          path: path/to/artifact
-      - run: cat path/to/artifact/world.txt
+      - run: |
+          echo ${{ env.TRITON_VERSION }}
+          echo ${{ env.DOCKER_IMAGE }}

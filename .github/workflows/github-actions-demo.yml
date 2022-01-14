@@ -9,6 +9,7 @@ on:
 
 env:
   TRITON_VERSION: "21.10"
+  DOCKER_IMAGE: "oneflow-serving:${{ github.ref_name }}"
 
 jobs:
   Upload-Artifact:
@@ -19,8 +20,6 @@ jobs:
   Download-Artifact:
     runs-on: ubuntu-latest
     needs: [Upload-Artifact]
-    env:
-      DOCKER_IMAGE: "oneflow-serving:${{ github.ref_name }}"
     steps:
       - run: |
           echo ${{ env.TRITON_VERSION }}

@@ -12,20 +12,11 @@ env:
   DOCKER_IMAGE: "oneflow-serving:${{ github.ref_name }}"
 
 jobs:
-  Upload-Artifact:
+  Echo-Job:
     runs-on: ubuntu-latest
-    outputs:
-      upload-status: ${{ steps.step2.outputs.good }} 
+    strategy:
+      matrix:
+        triton: ["21.10", "21.11", "21.12"]
+        serving: ["0.1", "0.2", "0.3"]
     steps:
-      - run: echo ${{ env.TRITON_VERSION }}
-      - id: step2
-        run: echo "::set-output name=good::bad"
-
-  Download-Artifact:
-    runs-on: ubuntu-latest
-    needs: [Upload-Artifact]
-    steps:
-      - run: |
-          echo ${{ env.TRITON_VERSION }}
-          echo ${{ env.DOCKER_IMAGE }}
-          echo ${{ needs.Upload-Artifact.outputs.upload-status }}
+      - run: echo "triton:${{ matrix.triton }} made serving:${{ matrix.serving }}"

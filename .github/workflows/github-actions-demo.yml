@@ -11,6 +11,10 @@ env:
   TRITON_VERSION: "21.10"
   DOCKER_IMAGE: "oneflow-serving:${{ github.ref_name }}"
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # cancel_previous:
   #   runs-on: ubuntu-latest

@@ -12,11 +12,18 @@ env:
   DOCKER_IMAGE: "oneflow-serving:${{ github.ref_name }}"
 
 jobs:
-  Echo-Job:
+  # cancel_previous:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Cancel Previous Runs
+  #       uses: styfle/cancel-workflow-action@0.9.1
+  #       with:
+  #         access_token: ${{ github.token }}
+
+  long_job:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        triton: ["21.10", "21.11", "21.12"]
-        serving: ["0.1", "0.2", "0.3"]
     steps:
-      - run: echo "triton:${{ matrix.triton }} made serving:${{ matrix.serving }}"
+      - name: sleep
+        run: |
+          echo "asdfasdf"
+          sleep 3600

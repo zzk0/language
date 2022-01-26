@@ -16,7 +16,7 @@ on:
 
 env:
   TRITON_VERSION: "21.10"
-  DOCKER_IMAGE: "oneflow-serving:${{ github.event_name == 'workflow_dispatch' ? github.event.inputs.tag : github.ref_name }}"
+  DOCKER_IMAGE: "oneflow-serving:${{ github.event.inputs.tag }}"
 
 concurrency:
   group: ci-${{ github.ref }}

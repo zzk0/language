@@ -68,3 +68,14 @@ jobs:
         run: |
           echo ${{ env.image_tag }}
           echo ${{ env.acr_image_tag }}
+
+  job1:
+    runs-on: ubuntu-latest
+    needs: [long_job]
+    env:
+      IMAGE: triton-devel
+    steps:
+      - name: show env image tag
+        run: |
+          echo ${{ env.image_tag }}
+          echo ${{ env.acr_image_tag }}

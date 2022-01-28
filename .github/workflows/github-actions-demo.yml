@@ -18,6 +18,7 @@ on:
         type: string
 
 env:
+  SERVING_IMAGE: oneflow-serving
   TRITON_VERSION: "21.10"
   DOCKER_IMAGE: "oneflow-serving:${{ github.event.inputs.tag }}"
   REGION_ID: cn-beijing

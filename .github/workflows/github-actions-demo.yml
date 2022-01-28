@@ -20,6 +20,9 @@ on:
 env:
   TRITON_VERSION: "21.10"
   DOCKER_IMAGE: "oneflow-serving:${{ github.event.inputs.tag }}"
+  REGION_ID: cn-beijing
+  REGISTRY: registry.cn-beijing.aliyuncs.com
+  NAMESPACE: oneflow
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -42,3 +45,21 @@ jobs:
       - run: echo '4'
       - run: env
       - run: echo ${{ github.ref_name }}
+      - name: Export docker image name
+        run: |
+          set -x
+          if [[ "${{ github.event_name }}" == "release" ]]
+          then
+            echo "image_tag=${{ env.SERVING_IMAGE }}:${{ github.ref_name }}" >> $GITHUB_ENV
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]
+          then
+            echo "image_tag=${{ env.SERVING_IMAGE }}:${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          elif [[ "${{ github.event_name }}" == "schedule" ]]
+          then
+            echo "image_tag=${{ env.SERVING_IMAGE }}:nightly" >> $GITHUB_ENV
+          else
+            echo "image_tag=${{ env.SERVING_IMAGE }}:run-id-${{ github.run_id }}" >> $GITHUB_ENV
+          fi
+          echo "acr_image_tag=${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.image_tag }}" >> $GITHUB_ENV
+          echo ${{ env.image_tag }}
+          echo ${{ env.acr_image_tag }}

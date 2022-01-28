@@ -61,6 +61,10 @@ jobs:
           else
             echo "image_tag=${{ env.SERVING_IMAGE }}:run-id-${{ github.run_id }}" >> $GITHUB_ENV
           fi
+      - name: Export acr docker image name
+        run: |
           echo "acr_image_tag=${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.image_tag }}" >> $GITHUB_ENV
+      - name: show env image tag
+        run: |
           echo ${{ env.image_tag }}
           echo ${{ env.acr_image_tag }}

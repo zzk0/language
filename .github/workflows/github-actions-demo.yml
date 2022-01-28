@@ -28,6 +28,8 @@ concurrency:
 jobs:
   long_job:
     runs-on: ubuntu-latest
+    env:
+      IMAGE: triton-devel
     steps:
       - name: sleep
         run: |
@@ -35,5 +37,6 @@ jobs:
           echo ${{ env.DOCKER_IMAGE }}
       - run: echo '1'
       - run: echo '2'
-      - run: echo '2'
-      - run: echo '2'
+      - run: echo '3'
+      - run: echo '4'
+      - run: env

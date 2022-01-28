@@ -41,3 +41,4 @@ jobs:
       - run: echo '3'
       - run: echo '4'
       - run: env
+      - run: echo ${{ github.ref_name }}

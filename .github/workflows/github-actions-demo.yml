@@ -34,6 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE: triton-devel
+    outputs:
+      output1: ${{ steps.output-image-tag.outputs.image_tag }}
+      output2: ${{ steps.output-image-tag.outputs.acr_image_tag }}
     steps:
       - name: sleep
         run: |
@@ -65,9 +68,12 @@ jobs:
         run: |
           echo "acr_image_tag=${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.image_tag }}" >> $GITHUB_ENV
       - name: show env image tag
+        id: output-image-tag
         run: |
           echo ${{ env.image_tag }}
           echo ${{ env.acr_image_tag }}
+          echo "::set-output name=image_tag::${{ env.image_tag }}"
+          echo "::set-output name=acr_image_tag::${{ env.acr_image_tag }}"
 
   job1:
     runs-on: ubuntu-latest
@@ -75,6 +81,10 @@ jobs:
     env:
       IMAGE: triton-devel
     steps:
+      - name: Set up environment variable
+        run: |
+          echo "image_tag=${{ needs.long_job.outputs.output1 }}" >> $GITHUB_ENV
+          echo "acr_image_tag=${{ needs.long_job.outputs.output2 }}" >> $GITHUB_ENV
       - name: show env image tag
         run: |
           echo ${{ env.image_tag }}

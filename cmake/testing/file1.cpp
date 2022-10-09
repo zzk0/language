@@ -1,0 +1,1 @@
+static int xx = 10;

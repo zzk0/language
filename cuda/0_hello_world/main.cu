@@ -11,6 +11,7 @@ __global__ void hello_world() {
 //  std::cout << "Hello Cuda" << std::endl;
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   int j = blockIdx.y * blockDim.y + threadIdx.y;
+  printf("%d %d\n", i, j);
 }
 
 int main() {

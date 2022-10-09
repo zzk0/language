@@ -1,5 +1,7 @@
 project(cuda CXX C CUDA)
-set(CMAKE_CUDA_FLAGS "-arch=compute_35 -g -G -O3")
+set(CMAKE_CUDA_FLAGS "-arch=compute_35 -g -G -O3 -std=c++14")
+include_directories(/usr/local/cuda-10.2/include)
 include_directories(./include)
 
 add_subdirectory(0_hello_world)
+add_subdirectory(matrix_sum)

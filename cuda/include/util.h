@@ -2,8 +2,9 @@
 #define CUDA_INCLUDE_UTIL
 
 #include <chrono>
-#include <stdio.h>
+#include <cstdio>
 #include <string>
+#include <random>
 
 #define CHECK(call)                                                            \
   do {                                                                         \

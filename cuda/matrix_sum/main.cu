@@ -6,13 +6,7 @@
 #include <vector>
 
 #include "smart_pointer.h"
-
-float RandomFloat() {
-  static std::random_device rd;
-  static std::mt19937 mt(rd());
-  static std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
-  return dist(mt);
-}
+#include "util.h"
 
 std::vector<float> NewMatrix(int nx, int ny) {
   return std::vector<float>(nx * ny, 0);

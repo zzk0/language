@@ -45,4 +45,8 @@ nvprof --metrics gld_throughput ./cuda_executable
 
 # 规约问题
 
+规约求和问题的实现方式：
 
+- 朴素实现：每个元素依次相加
+- 相邻配对：元素和它们直接相邻的元素配对相加
+- 交错配对：根据跨度配对元素

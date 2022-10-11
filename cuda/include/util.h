@@ -42,4 +42,19 @@ private:
   std::string format_str_;
 };
 
+template<typename T>
+inline T RandomNumber(T low = -1, T high = 1) {
+  static std::random_device rd;
+  static std::mt19937 mt(rd());
+  static std::uniform_real_distribution<float> dist(low, high);
+  return static_cast<T>(dist(mt));
+}
+
+template<typename T>
+inline void FillRandomNumber(std::vector<T> &data, size_t size, T low = -1, T high = 1) {
+  for (size_t i = 0; i < size; ++i) {
+    data[i] = RandomNumber<T>();
+  }
+}
+
 #endif /* CUDA_INCLUDE_UTIL */

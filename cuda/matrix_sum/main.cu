@@ -13,11 +13,7 @@ std::vector<float> NewMatrix(int nx, int ny) {
 }
 
 void InitMatrix(std::vector<float> &matrix, int nx, int ny) {
-  for (int i = 0; i < nx; ++i) {
-    for (int j = 0; j < ny; ++j) {
-      matrix[i * ny + j] = RandomFloat();
-    }
-  }
+  FillRandomNumber<float>(matrix, nx * ny);
 }
 
 void PrintMatrix(const std::vector<float> &matrix, int nx, int ny) {

@@ -354,6 +354,31 @@ __global__ void GpuReduceSum7(T *idata, T *odata, unsigned int size) {
   }
 }
 
+// template<typename T>
+// __global__ void ReduceSumRecursive(T *idata, T *odata, unsigned int size) {
+//   unsigned int tid = threadIdx.x;
+//   T *pidata = idata + blockIdx.x * blockDim.x;
+//   T *podata = &odata[blockIdx.x];
+
+//   if (size == 2 && tid == 0) {
+//     odata[blockIdx.x] = idata[0] + idata[1];
+//     return;
+//   }
+
+//   unsigned int stride = size >> 1;
+//   if (stride > 1 && tid < stride) {
+//     pidata[tid] = pidata[tid + stride];
+//   }
+
+//   __syncthreads();
+
+//   if (tid == 0) {
+//     ReduceSumRecursive<<<1, stride>>>(pidata, podata, stride);
+//     cudaDeviceSynchronize();
+//   }
+//   __syncthreads();
+// }
+
 void TestCase1() {
   constexpr unsigned int element_cnt = 1 << 24;
   std::vector<int> idata(element_cnt, 0);
@@ -429,6 +454,9 @@ void TestCase1() {
             "reduce interleave + loop unrolling x 8 + warp unrolling + "
             "complete unroll + template ",
             block_size, grid_size / 8);
+  // ReduceSum(ReduceSumRecursive<int>,
+  //           "reduce sum recursive ",
+  //           block_size, grid_size);
 }
 
 int main() {

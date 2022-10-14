@@ -95,3 +95,24 @@ time cost: 166 us       reduce interleave + loop unrolling x 8 + warp unrolling 
                     0.00%  1.5550us         2     777ns     446ns  1.1090us  cuDeviceGetUuid
                     0.00%  1.2330us         3     411ns     189ns     682ns  cuDeviceGetCount
 ```
+
+# 备注
+
+当开启以下选项的时候，会出现 illegal memory access，原因未知。
+
+```
+target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
+                       --relocatable-device-code=true
+                       >)
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+```
+
+```
+CPU reduce sum time cost: 14449 us
+GPU warmup time cost: 31 us
+time cost: 1750 us      reduce neighbor 
+time cost: 955 us       reduce neighbor + less divergence 
+time cost: 961 us       reduce interleave 
+time cost: 51101 us     reduce sum recursive 
+ERROR: /home/percent1/code/cmake_cpp_cuda/cuda/./include/smart_pointer.h:25,code:700,reason:an illegal memory access was encountered
+```

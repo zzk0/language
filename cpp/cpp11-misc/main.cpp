@@ -123,6 +123,24 @@ class Vector<float, double> {
   double y;
 };
 
+void TestStdUnique() {
+  auto Print = [](const std::vector<int>& arr) {
+    for (const auto& x : arr) {
+      std::cout << x << " ";
+    }
+    std::cout << std::endl;
+  };
+
+  std::vector<int> v{1, 2, 1, 1, 3, 3, 3, 4, 5, 4};
+  Print(v);
+  // std::unique 的作用时将 v 中连续的重复的元素只保留一个
+  // 返回值 last 的含义，[last, v.end()) 的元素是无意义的
+  auto last = std::unique(v.begin(), v.end());
+  Print(v);
+  v.erase(last, v.end());
+  Print(v);
+}
+
 int main() {
-  DynamicCastTest();
+  TestStdUnique();
 }

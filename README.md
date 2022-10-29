@@ -1,16 +1,6 @@
-# CMake-Cpp-Cuda
+# Programming Language
 
-A project for practicing CMake, Cpp, Cuda.
-
-# Build
-
-To build the project, you need to specify the location of nvcc:
-
-```
--DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
-```
-
-# code snippet
+A project for practicing programming language CMake, Cpp, Cuda.
 
 # cmake
 
@@ -39,3 +29,12 @@ https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
 一份官方的中文资料: https://www.nvidia.cn/docs/IO/51635/NVIDIA_CUDA_Programming_Guide_1.1_chs.pdf
 
 《CUDA C 编程权威指南》
+
+## Build
+
+To build the project, you need to specify the location of nvcc:
+
+```
+-DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+```
+

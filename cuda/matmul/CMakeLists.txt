@@ -1,0 +1,5 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.18)
+project(matmul)
+find_package(cuBLAS)
+add_executable(${PROJECT_NAME} main.cu)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CUBLAS_LIBRARIES})

@@ -42,6 +42,35 @@ private:
   std::string format_str_;
 };
 
+
+/**
+T can be following
+1. std::chrono::nanoseconds
+2. std::chrono::microseconds
+3. std::chrono::milliseconds
+*/
+template <typename T> class Timer {
+public:
+  Timer() {}
+
+  void Start() {
+    start_time_point_ = std::chrono::system_clock::now();
+  }
+
+  void End() {
+    end_time_point_ = std::chrono::system_clock::now();
+  }
+
+  int GetDuration() {
+    return std::chrono::duration_cast<T>(end_time_point_ - start_time_point_).count();
+  }
+
+private:
+  std::chrono::high_resolution_clock::time_point start_time_point_;
+  std::chrono::high_resolution_clock::time_point end_time_point_;
+};
+
+
 template<typename T>
 inline T RandomNumber(T low = -1, T high = 1) {
   static std::random_device rd;

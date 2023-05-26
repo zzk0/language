@@ -5,6 +5,7 @@ set(CMAKE_CUDA_ARCHITECTURES 70)  # default = 30
 include_directories(/usr/local/cuda-10.2/include)
 include_directories(./include)
 
+add_subdirectory(lib)
 add_subdirectory(0_hello_world)
 add_subdirectory(reduce_sum)
 add_subdirectory(matrix_sum)

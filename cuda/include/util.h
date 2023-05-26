@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <string>
 #include <random>
+#include <tuple>
 
 #define CHECK(call)                                                            \
   do {                                                                         \
@@ -85,5 +86,26 @@ inline void FillRandomNumber(std::vector<T> &data, size_t size, T low = -1, T hi
     data[i] = RandomNumber<T>();
   }
 }
+
+inline std::tuple<dim3, dim3> GetGridAndBlock(int m) {
+  dim3 block(128);
+  int grid_x = m / 128 + (m % 128 != 0);
+  dim3 grid(grid_x);
+  return {grid, block};
+}
+
+inline std::tuple<dim3, dim3> GetGridAndBlock(int m, int n) {
+  dim3 block(16, 16);
+  int grid_x = m / 16 + (m % 16 != 0);
+  int grid_y = n / 16 + (n % 16 != 0);
+  dim3 grid(grid_x, grid_y);
+  return {grid, block};
+}
+
+/**
+return true if two array has same elements, otherwise false
+TODO: verbose not implement yet
+*/
+bool EqualCheckCUDA(float *dev_a, float *dev_b, int numel, bool verbose=true);
 
 #endif /* CUDA_INCLUDE_UTIL */

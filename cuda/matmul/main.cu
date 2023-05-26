@@ -35,22 +35,6 @@ __global__ void PrintMatrixOnDevice(float *matrix, int nx, int ny) {
 }
 
 /**
-用于比较两个矩阵是否相同。
-列优先，(i, j) 对应位置为 i + j * ldx (ldx = 行的个数)
-*/
-__global__ void MatrixEqual(float *A, float *B, int m, int n, int *status) {
-  int tx = blockIdx.x * blockDim.x + threadIdx.x;
-  int ty = blockIdx.y * blockDim.y + threadIdx.y;
-  if (tx < m && ty < n) {
-    if (abs(A[tx + ty * m] - B[tx + ty * m]) > 1e-3) {
-      printf("not equal: %f %f\n", A[tx * m + ty], B[tx * m + ty]);
-      *status += 1;
-    }
-  }
-}
-
-
-/**
 采用列优先进行实现，与 cuBLAS 的默认行为保持一致。
 
 列优先，(i, j) 对应位置为 i + j * ldx (ldx = 行的个数)
@@ -60,6 +44,8 @@ C: (m, n)
 
 (1024, 1024) * (1024, 1024) -> (1024, 1024)
 <<<(128, 256), (8, 4)>>>  每个 block 32 个线程同时执行，启动 1024/blockDim.x, 1024/blockDim.y 个 block
+
+block, grid 的设置：https://zhuanlan.zhihu.com/p/442304996
 */
 __global__ void NaiveMatmul(float *A, float *B, float *C, int m, int n, int k) {
   int tx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -170,28 +156,21 @@ void CorrectnessCheck(int m=3, int n=4, int k=5) {
   }
   cudaDeviceSynchronize();
 
-  int status = 0;
-  int *dev_status;
-  cudaMalloc(&dev_status, sizeof(int));
-  cudaMemcpy(dev_status, &status, sizeof(int), cudaMemcpyHostToDevice);
-  dim3 grid(128, 256);
-  dim3 block(8, 4);
-  MatrixEqual<<<grid, block>>>(C_ptr.Get(), D_ptr.Get(), m, n, dev_status);
-  cudaDeviceSynchronize();
-  cudaMemcpy(&status, dev_status, sizeof(int), cudaMemcpyDeviceToHost);
-  if (status > 0) {
-    printf("not equal, status: %d\n", status);
+  bool equal = EqualCheckCUDA(C_ptr.Get(), D_ptr.Get(), m * n);
+  if (equal) {
+    printf("equal, status: %d\n", equal);
   }
   else {
-    printf("equal, status: %d\n", status);
+    printf("not equal, status: %d\n", equal);
   }
 }
 
-void TestMatmul(int size=1024) {
+void MatmulBenchmark(int size=1024) {
+  printf("---------------------- size = %d ----------------------\n", size);
   constexpr float alpha = 1.0f, beta = 0.0f;
-  int m = 3;
-  int n = 4;
-  int k = 5;
+  int m = size;
+  int n = size;
+  int k = size;
 
   auto timer = Timer<std::chrono::microseconds>{};
   
@@ -219,36 +198,30 @@ void TestMatmul(int size=1024) {
                 B_ptr.Get(), k, &beta, C_ptr.Get(), m);
     cudaDeviceSynchronize();
   }
-  PrintMatrixOnDevice<<<1, 1>>>(C_ptr.Get(), n, m);
   cublasDestroy(handle);
 
   {
     TimerRAII<std::chrono::microseconds> timer{"naive sgemm time cost: %d microseconds\n"};
-    dim3 grid(128, 256);
-    dim3 block(8, 4);
+    const auto& t = GetGridAndBlock(m, n);
+    const auto& grid = std::get<0>(t);
+    const auto& block = std::get<1>(t);
     NaiveMatmul<<<grid, block>>>(A_ptr.Get(), B_ptr.Get(), C_ptr.Get(), m, n, k);
     cudaDeviceSynchronize();
   }
-  PrintMatrixOnDevice<<<1, 1>>>(C_ptr.Get(), n, m);
   cudaDeviceSynchronize();
 }
 
 
 int main() {
-  // TestCase0();
-  // TestCase1();
   CorrectnessCheck(3, 4, 5);
   CorrectnessCheck(10, 20, 30);
   CorrectnessCheck(5, 8, 9);
   CorrectnessCheck(1024, 1024, 1024);
 
-
-  // TestMatmul(10);
-
-  // TestMatmul(1024);
-  // TestMatmul(2048);
-  // TestMatmul(4096);
-  // TestMatmul(8192);
-  // TestMatmul(16384);
+  // MatmulBenchmark(1024);
+  // MatmulBenchmark(2048);
+  // MatmulBenchmark(4096);
+  // MatmulBenchmark(8192);
+  // MatmulBenchmark(16384);
   return 0;
 }

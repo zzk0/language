@@ -8,32 +8,6 @@
 #include "smart_pointer.h"
 #include "util.h"
 
-std::vector<float> NewMatrix(int nx, int ny) {
-  return std::vector<float>(nx * ny, 0);
-}
-
-void InitMatrix(std::vector<float> &matrix, int nx, int ny) {
-  FillRandomNumber<float>(matrix, nx * ny);
-}
-
-void PrintMatrix(const std::vector<float> &matrix, int nx, int ny) {
-  for (int i = 0; i < nx; ++i) {
-    for (int j = 0; j < ny; ++j) {
-      std::cout << matrix[i * ny + j] << " ";
-    }
-    std::cout << std::endl;
-  }
-}
-
-__global__ void PrintMatrixOnDevice(float *matrix, int nx, int ny) {
-  for (int i = 0; i < nx; ++i) {
-    for (int j = 0; j < ny; ++j) {
-      printf("%f ", matrix[i * ny + j]);
-    }
-    printf("\n");
-  }
-}
-
 void AddMatricesOnHost(float *a, float *b, float *c, int nx, int ny) {
   for (int i = 0; i < nx; ++i) {
     for (int j = 0; j < ny; ++j) {
@@ -108,7 +82,7 @@ void TestCase0() {
   PrintMatrix(matrix, nx, ny);
 
   DeviceUniquePointer<float> ptr(matrix.data(), matrix.size());
-  PrintMatrixOnDevice<<<1, 1>>>(ptr.Get(), nx, ny);
+  PrintMatrixOnDevice(ptr.Get(), nx, ny);
 
   std::cout << CompareMatrices(matrix.data(), ptr.GetHostPtr().get(), nx, ny)
             << std::endl;

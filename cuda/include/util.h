@@ -1,6 +1,7 @@
 #ifndef CUDA_INCLUDE_UTIL
 #define CUDA_INCLUDE_UTIL
 
+#include <iostream>
 #include <chrono>
 #include <cstdio>
 #include <string>
@@ -106,6 +107,25 @@ inline std::tuple<dim3, dim3> GetGridAndBlock(int m, int n) {
 return true if two array has same elements, otherwise false
 TODO: verbose not implement yet
 */
-bool EqualCheckCUDA(float *dev_a, float *dev_b, int numel, bool verbose=true);
+bool EqualCheckCUDA(float *dev_a, float *dev_b, int numel, bool on_exit=false, bool verbose=true);
+
+inline std::vector<float> NewMatrix(int nx, int ny) {
+  return std::vector<float>(nx * ny, 0);
+}
+
+inline void InitMatrix(std::vector<float> &matrix, int nx, int ny) {
+  FillRandomNumber<float>(matrix, nx * ny);
+}
+
+inline void PrintMatrix(const std::vector<float> &matrix, int nx, int ny) {
+  for (int i = 0; i < nx; ++i) {
+    for (int j = 0; j < ny; ++j) {
+      std::cout << matrix[i * ny + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
+void PrintMatrixOnDevice(float *matrix, int nx, int ny);
 
 #endif /* CUDA_INCLUDE_UTIL */

@@ -18,9 +18,19 @@ __global__ void EqualCheckCUDAimpl(float *A, float *B, int numel, int *status) {
   }
 }
 
+__global__ void PrintMatrixOnDeviceImpl(float *matrix, int nx, int ny) {
+  for (int i = 0; i < nx; ++i) {
+    for (int j = 0; j < ny; ++j) {
+      printf("%f ", matrix[i * ny + j]);
+    }
+    printf("\n");
+  }
 }
 
-bool EqualCheckCUDA(float *dev_a, float *dev_b, int numel, bool verbose) {
+
+}
+
+bool EqualCheckCUDA(float *dev_a, float *dev_b, int numel, bool on_exit, bool verbose) {
   const auto& t = GetGridAndBlock(numel);
   const auto& grid = std::get<0>(t);
   const auto& block = std::get<1>(t);
@@ -30,5 +40,14 @@ bool EqualCheckCUDA(float *dev_a, float *dev_b, int numel, bool verbose) {
   cudaMemcpy(dev_status, &status, sizeof(int), cudaMemcpyHostToDevice);
   EqualCheckCUDAimpl<<<grid, block>>>(dev_a, dev_b, numel, dev_status);
   cudaMemcpy(&status, dev_status, sizeof(int), cudaMemcpyDeviceToHost);
+  cudaDeviceSynchronize();
+  if (status != 0) {
+    printf("two pointer has different elements: %d\nThe program will exit!", status);
+    exit(-1);
+  }
   return (status == 0);
+}
+
+void PrintMatrixOnDevice(float *matrix, int nx, int ny) {
+  PrintMatrixOnDeviceImpl<<<1, 1>>>(matrix, nx, ny);
 }

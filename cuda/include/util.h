@@ -95,10 +95,10 @@ inline std::tuple<dim3, dim3> GetGridAndBlock(int m) {
   return {grid, block};
 }
 
-inline std::tuple<dim3, dim3> GetGridAndBlock(int m, int n) {
-  dim3 block(16, 16);
-  int grid_x = m / 16 + (m % 16 != 0);
-  int grid_y = n / 16 + (n % 16 != 0);
+inline std::tuple<dim3, dim3> GetGridAndBlock(int m, int n, const int block_x=16, const int block_y=16) {
+  dim3 block(block_x, block_y);
+  int grid_x = m / block_x + (m % block_x != 0);
+  int grid_y = n / block_y + (n % block_y != 0);
   dim3 grid(grid_x, grid_y);
   return {grid, block};
 }

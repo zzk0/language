@@ -42,7 +42,7 @@ bool EqualCheckCUDA(float *dev_a, float *dev_b, int numel, bool on_exit, bool ve
   cudaMemcpy(&status, dev_status, sizeof(int), cudaMemcpyDeviceToHost);
   cudaDeviceSynchronize();
   if (status != 0) {
-    printf("two pointer has different elements: %d\nThe program will exit!", status);
+    printf("two pointer has different elements: %d\nThe program will exit!\n", status);
     exit(-1);
   }
   return (status == 0);

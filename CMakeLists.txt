@@ -12,6 +12,9 @@ if (BUILD_CPP_PROTOBUF)
     message("-------- build cpp protobuf")
 endif()
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/third_party)
+include(third_party)
+
 add_subdirectory(cmake)
 add_subdirectory(cpp)
 add_subdirectory(cuda)

@@ -21,7 +21,8 @@ const std::map<std::string, MatmulFunc> matmul_algorithms{
     // {"cublas", CublasMatmul},
     {"naive", NaiveMatmul},
     {"block", BlockMatmul},
-    {"block_stride", BlockWithStrideMatmul},
+    // {"block_stride", BlockWithStrideMatmul},
+    {"block_stride_align", BlockWithStrideAlignMatmul},
 };
 
 void AddRow(tabulate::Table& table, const std::string& name, int m, int n, int k, bool flag, double duration) {

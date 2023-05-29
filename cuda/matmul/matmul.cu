@@ -169,6 +169,55 @@ __global__ void BlockWithStrideMatmulImpl(float *A, float *B, float *C, int m, i
   }
 }
 
+/**
+一个线程计算 stride * stride 个元素；因此启动的 block 数量相应减少为 block / stride / stride
+要求矩阵的元素数量大于 16 * stride(2) = 32
+*/
+template<int stride>
+__global__ void BlockWithStrideAlignMatmulImpl(float *A, float *B, float *C, int m, int n, int k) {
+  constexpr int block_size = 16 * stride;
+  int matrix_size = m;
+  int block_num = matrix_size / block_size;
+  int tx = blockIdx.x * blockDim.x + threadIdx.x;
+  int ty = blockIdx.y * blockDim.y + threadIdx.y;
+  
+  float sum[stride * stride]{0.0f};
+  for (int b = 0; b < block_num; ++b) {
+    // read elements to shared memory
+    __shared__ __align__(16) float sa[block_size * block_size];
+    __shared__ __align__(16) float sb[block_size * block_size];
+    for (int i = 0; i < stride; ++i) {
+      for (int j = 0; j < stride; ++j) {
+        // (x, y) -> (x + i, y + i); (tx, ty) -> (tx + i, ty + i)
+        int x0 = threadIdx.x * stride + i, y0 = threadIdx.y * stride + j;
+        int x1 = tx * stride + i, y1 = ty * stride + j;
+        sa[x0 + y0 * block_size] = A[x1 + (y1 % block_size + b * block_size) * m];
+        sb[x0 + y0 * block_size] = B[(x1 % block_size + b * block_size) + y1 * k];
+      }
+    }
+    __syncthreads();
+
+    // compute
+    for (int i = 0; i < stride; ++i) {
+      for (int j = 0; j < stride; ++j) {
+        int x0 = threadIdx.x * stride + i, y0 = threadIdx.y * stride + j;
+        #pragma unroll
+        for (int k = 0; k < block_size; ++k) {
+          sum[i + j * stride] += sa[x0 + k * block_size] * sb[k + y0 * block_size];
+        }
+      }
+    }
+    __syncthreads();
+  }
+
+  for (int i = 0; i < stride; ++i) {
+    for (int j = 0; j < stride; ++j) {
+      int x1 = tx * stride + i, y1 = ty * stride + j;
+      C[x1 + y1 * m] = sum[i + j * stride];
+    }
+  }
+}
+
 } // namespace matmul
 
 void NaiveMatmul(float *A, float *B, float *C, int m, int n, int k) {
@@ -217,6 +266,19 @@ void BlockWithStrideMatmul(float *A, float *B, float *C, int m, int n, int k) {
   grid.y /= stride;
   {
     matmul::BlockWithStrideMatmulImpl<stride><<<grid, block>>>(A, B, C, m, n, k);
+    cudaDeviceSynchronize();
+  }
+}
+
+void BlockWithStrideAlignMatmul(float *A, float *B, float *C, int m, int n, int k) {
+  constexpr int stride = 2;
+  const auto &t = GetGridAndBlock(m, n);
+  auto grid = std::get<0>(t);
+  const auto &block = std::get<1>(t);
+  grid.x /= stride;
+  grid.y /= stride;
+  {
+    matmul::BlockWithStrideAlignMatmulImpl<stride><<<grid, block>>>(A, B, C, m, n, k);
     cudaDeviceSynchronize();
   }
 }

@@ -240,11 +240,11 @@ __global__ void BlockWithTileReorderAlignMatmulImpl(float *A, float *B, float *C
   int tx = blockIdx.x * blockDim.x + threadIdx.x;
   int ty = blockIdx.y * blockDim.y + threadIdx.y;
   
-  float sum[stride * stride]{0.0f};
   __shared__ __align__(16) float sa[block_size * block_size];
   __shared__ __align__(16) float sb[block_size * block_size];
-  float sa_reg[stride]{0.0f};
-  float sb_reg[stride]{0.0f};
+  register float sum[stride * stride]{0.0f};  // 请注意这里是否有声明 register 对性能影响很大
+  register float sa_reg[stride]{0.0f};
+  register float sb_reg[stride]{0.0f};
   for (int b = 0; b < block_num; ++b) {
     // read elements to shared memory
     for (int i = 0; i < stride; ++i) {

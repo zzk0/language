@@ -26,12 +26,16 @@ const std::map<std::string, MatmulFunc> matmul_algorithms{
     {"block_tile_reorder", BlockWithTileReorderAlignMatmul},
 };
 
-void AddRow(tabulate::Table& table, const std::string& name, int m, int n, int k, bool flag, double duration) {
+void AddRow(tabulate::Table& table, const std::string& name, int m, int n, int k, bool flag, double duration, double cublas_duration) {
+  double current_flops = 2.0 * m * n * k / (duration * 1e-3) * 1e-9;
+  double cublas_flops = 2.0 * m * n * k / (cublas_duration * 1e-3) * 1e-9;
+  double percent = current_flops / cublas_flops * 100.0;
   table.add_row({
       name, std::to_string(m) + " " + std::to_string(n) +  " " + std::to_string(k),
          flag ? "true" : "false",
          std::to_string(duration) + "ms",
-         std::to_string(2.0 * m * n * k / (duration * 1e-3) * 1e-9)
+         std::to_string(current_flops),
+         std::to_string(percent) + "%"
   });
 }
 
@@ -71,8 +75,9 @@ void MatmulBenchmark(int m = 3, int n = 4, int k = 5, int times = 100) {
 
   // 4.1 prepare the tabulate::Table
   tabulate::Table table;
-  table.add_row({"name", "size", "correctness", "latency", "GFLOPs"});
-  AddRow(table, "cublas", m, n, k, true, timer.GetDuration() / 100.0);
+  double cublas_duration = timer.GetDuration() / 100.0;
+  table.add_row({"name", "size", "correctness", "latency", "GFLOPs", "percent"});
+  AddRow(table, "cublas", m, n, k, true, cublas_duration, cublas_duration);
 
   // 5. benchmark the custom matmul
   for (auto iter = matmul_algorithms.begin(); iter != matmul_algorithms.end();
@@ -94,33 +99,13 @@ void MatmulBenchmark(int m = 3, int n = 4, int k = 5, int times = 100) {
       func(A_ptr.Get(), B_ptr.Get(), D_ptr.Get(), m, n, k);
     }
     timer.End();
-    AddRow(table, name, m, n, k, true, timer.GetDuration() / 100.0);
+    AddRow(table, name, m, n, k, true, timer.GetDuration() / 100.0, cublas_duration);
   }
 
   std::cout << table << std::endl;
 }
 
-__global__ void TestFloat4(float *arr) {
-  __shared__ float arr1[16];
-  if (threadIdx.x == 0) {
-    for (int i = 0; i < 16; ++i) {
-      arr1[i] = arr[i];
-    }
-  }
-  __syncthreads();
-  float4 data = *((float4*) (arr1 + 2 * 4));
-  if (threadIdx.x == 2) {
-    printf("the third row: %f %f %f %f\n", data.x, data.y, data.z, data.w);
-  }
-}
-
 int main() {
-  // std::vector<float> A = NewMatrix(4, 4);
-  // FillRandomNumber(A, 16);
-  // PrintMatrix(A, 4, 4);
-  // DeviceUniquePointer<float> A_ptr(A.data(), A.size());
-  // TestFloat4<<<1, 4>>>(A_ptr.Get());
-
   // MatmulBenchmark(3, 4, 5, 0);
   // MatmulBenchmark(5, 8, 9, 0);
   // MatmulBenchmark(10, 20, 30, 0);

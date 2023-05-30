@@ -35,6 +35,6 @@ https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
 To build the project, you need to specify the location of nvcc:
 
 ```
--DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+-DCMAKE_CUDA_COMPILER=/usr/local/cuda-10.2/bin/nvcc
 ```
 

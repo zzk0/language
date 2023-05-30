@@ -23,6 +23,7 @@ const std::map<std::string, MatmulFunc> matmul_algorithms{
     {"block", BlockMatmul},
     // {"block_stride", BlockWithStrideMatmul},
     {"block_stride_align", BlockWithStrideAlignMatmul},
+    {"block_tile_reorder", BlockWithTileReorderAlignMatmul},
 };
 
 void AddRow(tabulate::Table& table, const std::string& name, int m, int n, int k, bool flag, double duration) {
@@ -99,7 +100,27 @@ void MatmulBenchmark(int m = 3, int n = 4, int k = 5, int times = 100) {
   std::cout << table << std::endl;
 }
 
+__global__ void TestFloat4(float *arr) {
+  __shared__ float arr1[16];
+  if (threadIdx.x == 0) {
+    for (int i = 0; i < 16; ++i) {
+      arr1[i] = arr[i];
+    }
+  }
+  __syncthreads();
+  float4 data = *((float4*) (arr1 + 2 * 4));
+  if (threadIdx.x == 2) {
+    printf("the third row: %f %f %f %f\n", data.x, data.y, data.z, data.w);
+  }
+}
+
 int main() {
+  // std::vector<float> A = NewMatrix(4, 4);
+  // FillRandomNumber(A, 16);
+  // PrintMatrix(A, 4, 4);
+  // DeviceUniquePointer<float> A_ptr(A.data(), A.size());
+  // TestFloat4<<<1, 4>>>(A_ptr.Get());
+
   // MatmulBenchmark(3, 4, 5, 0);
   // MatmulBenchmark(5, 8, 9, 0);
   // MatmulBenchmark(10, 20, 30, 0);

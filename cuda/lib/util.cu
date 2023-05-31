@@ -12,7 +12,7 @@ __global__ void EqualCheckCUDAimpl(float *A, float *B, int numel, int *status) {
   int tx = blockIdx.x * blockDim.x + threadIdx.x;
   if (tx < numel) {
     if (abs(A[tx] - B[tx]) > 1e-3) {
-      printf("not equal: %f %f\n", A[tx], B[tx]);
+      // printf("not equal: %f %f\n", A[tx], B[tx]);
       *status += 1;
     }
   }

@@ -123,6 +123,9 @@ __global__ void BlockMatmulImpl(float *A, float *B, float *C, int m, int n, int 
 /**
 一个线程计算 stride * stride 个元素；因此启动的 block 数量相应减少为 block / stride / stride
 要求矩阵的元素数量大于 16 * stride(2) = 32
+
+如果 stride = 4, 那么 kernel 的性能将急剧下降(50% -> 20%)，可能的原因单个 kernel 的执行时间变成了，
+可能设备上的 SM 相对充足？stride 多了，启动的 block 少了，没有充分利用 SM 资源吧？
 */
 template<int stride>
 __global__ void BlockWithStrideMatmulImpl(float *A, float *B, float *C, int m, int n, int k) {
@@ -132,11 +135,11 @@ __global__ void BlockWithStrideMatmulImpl(float *A, float *B, float *C, int m, i
   int tx = blockIdx.x * blockDim.x + threadIdx.x;
   int ty = blockIdx.y * blockDim.y + threadIdx.y;
   
-  float sum[stride * stride]{0.0f};
+  __shared__ float sa[block_size * block_size];
+  __shared__ float sb[block_size * block_size];
+  register float sum[stride * stride]{0.0f};
   for (int b = 0; b < block_num; ++b) {
     // read elements to shared memory
-    __shared__ float sa[block_size * block_size];
-    __shared__ float sb[block_size * block_size];
     for (int i = 0; i < stride; ++i) {
       for (int j = 0; j < stride; ++j) {
         // (x, y) -> (x + i, y + i); (tx, ty) -> (tx + i, ty + i)
@@ -188,11 +191,11 @@ __global__ void BlockWithStrideAlignMatmulImpl(float *A, float *B, float *C, int
   int tx = blockIdx.x * blockDim.x + threadIdx.x;
   int ty = blockIdx.y * blockDim.y + threadIdx.y;
   
-  float sum[stride * stride]{0.0f};
+  __shared__ __align__(16) float sa[block_size * block_size];
+  __shared__ __align__(16) float sb[block_size * block_size];
+  register float sum[stride * stride]{0.0f};
   for (int b = 0; b < block_num; ++b) {
     // read elements to shared memory
-    __shared__ __align__(16) float sa[block_size * block_size];
-    __shared__ __align__(16) float sb[block_size * block_size];
     for (int i = 0; i < stride; ++i) {
       for (int j = 0; j < stride; ++j) {
         // (x, y) -> (x + i, y + i); (tx, ty) -> (tx + i, ty + i)
@@ -230,7 +233,7 @@ __global__ void BlockWithStrideAlignMatmulImpl(float *A, float *B, float *C, int
 
 sb[x0 * block_size + y0] = B[(x1 % block_size + b * block_size) + y1 * k];
 
-性能却下降了，猜测可能的原因是因为 LD 执行单元不够
+性能却下降了，猜测可能的原因是因为 LD 执行单元不够；float4 提升并不大，1% ？
 */
 template<int stride>
 __global__ void BlockWithTileReorderAlignMatmulImpl(float *A, float *B, float *C, int m, int n, int k) {
@@ -261,8 +264,14 @@ __global__ void BlockWithTileReorderAlignMatmulImpl(float *A, float *B, float *C
     
     // compute
     for (int k = 0; k < block_size; ++k) {
-      float4 data_a = *((float4*) (sa + threadIdx.x * stride + k * block_size));
-      sa_reg[0] = data_a.x; sa_reg[1] = data_a.y; sa_reg[2] = data_a.z; sa_reg[3] = data_a.w; 
+      // float4 data_a = *((float4*) (sa + threadIdx.x * stride + k * block_size));
+      // sa_reg[0] = data_a.x; sa_reg[1] = data_a.y; sa_reg[2] = data_a.z; sa_reg[3] = data_a.w; 
+      // data_a = *((float4*) (sa + threadIdx.x * stride + k * block_size + 4));
+      // sa_reg[4] = data_a.x; sa_reg[5] = data_a.y; sa_reg[6] = data_a.z; sa_reg[7] = data_a.w; 
+      for (int i = 0; i < stride; ++i) {
+        int x0 = threadIdx.x * stride + i;
+        sa_reg[i] = sa[x0 + k * block_size];
+      }
       for (int j = 0; j < stride; ++j) {
         int y0 = threadIdx.y * stride + j;
         sb_reg[j] = sb[k + y0 * block_size];
@@ -353,7 +362,7 @@ void BlockWithStrideAlignMatmul(float *A, float *B, float *C, int m, int n, int 
 
 void BlockWithTileReorderAlignMatmul(float *A, float *B, float *C, int m, int n, int k) {
   constexpr int stride = 4;
-  const auto &t = GetGridAndBlock(m, n);
+  const auto &t = GetGridAndBlock(m, n); //, 8, 8);
   auto grid = std::get<0>(t);
   const auto &block = std::get<1>(t);
   grid.x /= stride;
